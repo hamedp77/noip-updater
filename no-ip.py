@@ -7,8 +7,8 @@ ENDPOINT = 'https://dynupdate.no-ip.com/nic/update'
 USERNAME = 'hamedp77@gmail.com'
 PASSWORD = 'h@med103070'
 HOSTNAME = 'hmdnetwork.ddns.net'
-INTERVAL = 300 # in seconds
-AUTHSTRING = b64encode(USERNAME.encode() + ':'.encode() + PASSWORD.encode())
+INTERVAL = 60 # in seconds
+AUTHSTRING = b64encode((USERNAME + ':' + PASSWORD).encode())
 
 
 def getIP():
@@ -26,14 +26,16 @@ def getIP():
         print(datetime.datetime.now(), ': [internal error] An error occured while trying to retrieve machine\'s IP address.')
 
 
-def dnsQuery(name, type='a'):
+def dnsQuery(name, type='A'):
+
+    # Simple DNS query resolver using Google's DNS over HTTPS endpoint.
 
     r = requests.get(f'https://8.8.8.8/resolve?name={name}&type={type}')
 
     if r.status_code == 200:
         try:
             return r.json()['Answer'][0]['data']
-            
+
         except (IndexError, KeyError):
             pass
     else:
@@ -50,7 +52,7 @@ def updateHostname(newIP):
     responseHandler(r.text.strip())
 
 
-def checkForIpChange(interval):
+def checkForIpChange():
 
     '''
     Query Google DoH servers and get the A record that the HOSTNAME is pointing to.
@@ -58,15 +60,13 @@ def checkForIpChange(interval):
 
     '''
 
-    while True:
-        currentIP = dnsQuery(HOSTNAME)
-        if getIP() != currentIP:
-            print(datetime.datetime.now(), ': [info] New IP Detected, Updating Hostname...')
-            currentIP = getIP()
-            updateHostname(currentIP)
-        else:
-            print(datetime.datetime.now(), ': [info] No IP Change Detected')
-        sleep(interval)
+    currentIP = dnsQuery(HOSTNAME)
+    if getIP() != currentIP:
+        print(datetime.datetime.now(), ': [info] New IP Detected, Updating Hostname...')
+        currentIP = getIP()
+        updateHostname(currentIP)
+    else:
+        print(datetime.datetime.now(), ': [info] No IP Change Detected')
 
 
 def responseHandler(noipResponse):
@@ -103,4 +103,6 @@ def responseHandler(noipResponse):
         exit()
 
 
-checkForIpChange(INTERVAL)
+while True:
+    checkForIpChange()
+    sleep(INTERVAL)
