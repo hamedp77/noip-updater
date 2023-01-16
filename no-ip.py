@@ -20,7 +20,7 @@ def getIP():
 
     r = requests.get(ipInfoEndpoint, headers=headers)
 
-    if r.status_code == 200:
+    if r.ok:
         return r.text.strip()
     else:
         print(datetime.datetime.now(), ': [internal error] An error occured while trying to retrieve machine\'s IP address.')
@@ -32,7 +32,7 @@ def dnsQuery(name, type='A'):
 
     r = requests.get(f'https://8.8.8.8/resolve?name={name}&type={type}')
 
-    if r.status_code == 200:
+    if r.ok:
         try:
             return r.json()['Answer'][0]['data']
 
