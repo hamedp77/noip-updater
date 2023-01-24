@@ -1,8 +1,10 @@
 import requests
-import json
 
-def dns_query(name, type):
+def dns_query(name, type_):
 
-    r = requests.get(f'https://8.8.8.8/resolve?name={name}&type={type}')
+    doh_url = 'https://8.8.8.8/resolve'
+    payload = {'name': name, 'type': type_}
+    
+    r = requests.get(doh_url, params=payload)
     
     return r.json()['Answer'][0]['data']
