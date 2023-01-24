@@ -72,7 +72,7 @@ def check_for_ip_change():
         current_ip = get_ip()
         update_hostname(current_ip)
     else:
-        print(datetime.datetime.now(), ': [info] No IP Change Detected')
+        print(datetime.datetime.now(), ': [info] No IP Change Detected.')
 
 
 def response_handler(noip_response):
