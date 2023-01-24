@@ -31,7 +31,10 @@ def dns_query(name, type_='A'):
 
     # Simple DNS query resolver using Google's DNS over HTTPS endpoint.
 
-    r = requests.get(f'https://8.8.8.8/resolve?name={name}&type={type_}')
+    doh_url = 'https://8.8.8.8/resolve'
+    payload = {'name': name, 'type': type_}
+
+    r = requests.get(doh_url, params=payload)
 
     if r.ok:
         try:
