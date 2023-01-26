@@ -56,9 +56,9 @@ def update_hostname(new_ip):
     # Update the hostname if any IP change is detected
 
     headers = {'User-Agent': 'curl/7.83.1', 'Authorization': 'Basic ' + AUTHSTRING.decode()}
-    data = {'hostname': HOSTNAME, 'myip': new_ip}
+    payload = {'hostname': HOSTNAME, 'myip': new_ip}
 
-    r = requests.get(ENDPOINT, headers=headers, data=data)
+    r = requests.get(ENDPOINT, headers=headers, params=payload)
 
     response_handler(r.text.strip())
 
