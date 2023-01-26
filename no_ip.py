@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ENDPOINT = 'https://dynupdate.no-ip.com/nic/update'
+UPDATE_ENDPOINT = 'https://dynupdate.no-ip.com/nic/update'
 EMAIL = os.environ.get('email')
 PASSWORD = os.environ.get('password')
 HOSTNAME = os.environ.get('hostname')
@@ -58,7 +58,7 @@ def update_hostname(new_ip):
     headers = {'User-Agent': 'curl/7.83.1', 'Authorization': 'Basic ' + AUTHSTRING.decode()}
     payload = {'hostname': HOSTNAME, 'myip': new_ip}
 
-    r = requests.get(ENDPOINT, headers=headers, params=payload)
+    r = requests.get(UPDATE_ENDPOINT, headers=headers, params=payload)
 
     response_handler(r.text.strip())
 
