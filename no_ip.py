@@ -1,14 +1,18 @@
+import os
 import requests
 import datetime
 from base64 import b64encode
 from time import sleep
+from dotenv import load_dotenv
+
+load_dotenv()
 
 ENDPOINT = 'https://dynupdate.no-ip.com/nic/update'
-USERNAME = 'hamedp77@gmail.com'
-PASSWORD = 'h@med103070'
-HOSTNAME = 'hmdnetwork.ddns.net'
+EMAIL = os.environ.get('email')
+PASSWORD = os.environ.get('password')
+HOSTNAME = os.environ.get('hostname')
 INTERVAL = 60  # in seconds
-AUTHSTRING = b64encode((USERNAME + ':' + PASSWORD).encode())
+AUTHSTRING = b64encode((EMAIL + ':' + PASSWORD).encode())
 
 
 def get_ip():
@@ -52,8 +56,9 @@ def update_hostname(new_ip):
     # Update the hostname if any IP change is detected
 
     headers = {'User-Agent': 'curl/7.83.1', 'Authorization': 'Basic ' + AUTHSTRING.decode()}
+    data = {'hostname': HOSTNAME, 'myip': new_ip}
 
-    r = requests.get(ENDPOINT + f'?hostname={HOSTNAME}&myip={new_ip}', headers=headers)
+    r = requests.get(ENDPOINT, headers=headers, data=data)
 
     response_handler(r.text.strip())
 
@@ -117,6 +122,12 @@ def response_handler(noip_response):
         exit()
 
 
-while True:
-    check_for_ip_change()
-    sleep(INTERVAL)
+def main():
+
+    while True:
+        check_for_ip_change()
+        sleep(INTERVAL)
+
+
+if __name__ == '__main__':
+    main()
