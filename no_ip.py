@@ -16,7 +16,7 @@ AUTHSTRING = b64encode((EMAIL + ':' + PASSWORD).encode())
 
 
 def get_ip():
-    
+
     # Get current public IPv4 address of the client machine
 
     ip_info_endpoint = 'https://2ip.io'
@@ -64,7 +64,6 @@ def update_hostname(new_ip):
 
 
 def check_for_ip_change():
-
     """
     Query Google DoH servers and get the A record that the HOSTNAME is pointing to.
     Compare that with current IP address and update if necessary.
