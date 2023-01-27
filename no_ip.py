@@ -123,6 +123,8 @@ def response_handler(noip_response):
 
 def main():
 
+    print(datetime.datetime.now(), ': [info] Starting Service...')
+    
     while True:
         check_for_ip_change()
         sleep(INTERVAL)
