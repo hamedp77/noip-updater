@@ -91,13 +91,13 @@ def response_handler(noip_response):
 
     elif 'nohost' in noip_response:
         print(datetime.datetime.now(),
-              f': [{noip_response}] Hostname supplied does not exist under specified account.'
+              f': [{noip_response}] Hostname supplied does not exist under specified account. '
               'Please double check your information and try again.')
         exit()
 
     elif 'badauth' in noip_response:
         print(datetime.datetime.now(),
-              f': [{noip_response}] Invalid username or password.'
+              f': [{noip_response}] Invalid username or password. '
               f'Please double check your information and try again.')
         exit()
 
