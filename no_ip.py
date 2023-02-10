@@ -18,6 +18,7 @@ AUTHSTRING = b64encode((EMAIL + ':' + PASSWORD).encode())
 
 def get_ip():
     """Get current public IPv4 address of the client machine"""
+
     ip_info_endpoint = 'https://2ip.io'
     headers = {'User-Agent': 'curl/7.83.1'}
     r = requests.get(ip_info_endpoint, headers=headers)
@@ -29,6 +30,7 @@ def get_ip():
 
 def dns_query(name, type_='A'):
     """Simple DNS query resolver using Google's DNS over HTTPS endpoint."""
+
     doh_url = 'https://8.8.8.8/resolve'
     payload = {'name': name, 'type': type_}
     r = requests.get(doh_url, params=payload)
@@ -44,6 +46,7 @@ def dns_query(name, type_='A'):
 
 def update_hostname(new_ip):
     """Update the hostname if any IP change is detected."""
+
     headers = {'User-Agent': 'curl/7.83.1', 'Authorization': 'Basic ' + AUTHSTRING.decode()}
     payload = {'hostname': HOSTNAME, 'myip': new_ip}
     r = requests.get(UPDATE_ENDPOINT, headers=headers, params=payload)
@@ -55,6 +58,7 @@ def check_for_ip_change():
     Query Google DoH servers and get the A record that the HOSTNAME is pointing to.
     Compare that with current IP address and update if necessary.
     """
+
     current_ip = dns_query(HOSTNAME)
     if get_ip() != current_ip:
         print(datetime.datetime.now(), ': [info] New IP Detected, Updating Hostname...')
@@ -66,6 +70,7 @@ def check_for_ip_change():
 
 def response_handler(noip_response):
     """Parse the response from No-IP and output relevant errors or messages."""
+
     if 'good' in noip_response:
         print(datetime.datetime.now(), ': [good] Update Successful! ', noip_response.split(' ')[1])
     elif 'nochg' in noip_response:
@@ -98,7 +103,8 @@ def response_handler(noip_response):
 
 
 def main():
-    """simple main function to start the script and check IP changes based on set INTERVAL"""
+    """start the script and check IP changes based on set INTERVAL."""
+
     print(datetime.datetime.now(), ': [info] Starting Service...')
     while True:
         check_for_ip_change()
