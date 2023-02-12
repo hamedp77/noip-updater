@@ -19,14 +19,14 @@ AUTHSTRING = b64encode((EMAIL + ':' + PASSWORD).encode())
 def timestamp():
     """Returns currnet date and time.
 
-    The format is YEAR-MONTH-DAY HOUR:MINUTE:SECOND
+    The format is "YEAR-MONTH-DAY HOUR:MINUTE:SECOND".
     """
 
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def get_ip():
-    """Get current public IPv4 address of the client machine"""
+    """Get current public IPv4 address of the client machine."""
 
     ip_info_endpoint = 'https://2ip.io'
     headers = {'User-Agent': 'curl/7.83.1'}
@@ -50,7 +50,8 @@ def dns_query(name, type_='A'):
             pass
     else:
         print(timestamp(),
-              ': [internal error] An error occurred while trying to retrieve hostname\'s IP address.')
+                ': [internal error] An error occurred while trying to '
+                'retrieve hostname\'s IP address.')
 
 
 def update_hostname(new_ip):
