@@ -1,7 +1,7 @@
 import os
 import sys
-import datetime
 from time import sleep
+from datetime import datetime
 from base64 import b64encode
 from dotenv import load_dotenv
 import requests
@@ -22,7 +22,7 @@ def timestamp():
     The format is "YEAR-MONTH-DAY HOUR:MINUTE:SECOND".
     """
 
-    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def get_ip():
