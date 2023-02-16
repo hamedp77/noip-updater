@@ -1,2 +1,5 @@
 .env
 docker-compose.yaml
+dist
+build
+*.spec
