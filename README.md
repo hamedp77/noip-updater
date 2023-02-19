@@ -45,6 +45,6 @@ HOSTNAME=yourhostname
    - **WARNING**: Don't forget to fill it with **your own** account information.
    - **Note**: Of course this is far from secure but it's in your local machine and is never shared with anyone. The process of updating the hostname is also using HTTPS so it's encrypted.
 
-1. Install Pyinstaller by running `pip install pyinstaller`
-2. After the installation, run `pyinstaller <path-to-script> --one-file`. The `--one-file` makes the whole thing a single .exe file which you can run manually or schedule to run using windows task scheduler.
+4. Install Pyinstaller by running `pip install pyinstaller`
+5. After the installation, run `pyinstaller <path-to-script> --one-file`. The `--one-file` makes the whole thing a single .exe file which you can run manually or schedule to run using windows task scheduler.
    - `<path-to-script>` is the absolute or relative path of the Python script you're trying to convert to .exe.
