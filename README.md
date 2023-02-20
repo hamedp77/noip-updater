@@ -2,11 +2,11 @@
 
 This script simply updates hostnames provided by [No-IP](https://www.noip.com/). No-IP is a DDNS (Dynamic DNS) provider which offers free and paid tier DDNS services.
 
-If you are looking for a pretty solution or something that works flawlessly, this probably isn't the project you're looking for. This is more of a learning project for my own Python skills which I also made available on GitHub so it might inspire or help someone in any possible way.
+If you are looking for a pretty solution or something that works flawlessly, this probably isn't the project you're looking for (check [this](https://github.com/pv8/noipy) out). This is more of a learning project for my own Python skills which I also made available on GitHub so it might inspire or help someone in any possible way.
 
 ## Usage
 
-Before we get to deployment methods and steps you should know that the proceess is not very elegant or easy and you might need somewhat of a knowledge before getting to it.
+Before we get to deployment methods and steps, you should know that the proceess is not very elegant or easy and you might need somewhat of a knowledge before getting to it.
 
 Currently, there are 3 methods of deployment if you want to use or test this script.
 1. Docker (Linux)
@@ -30,7 +30,7 @@ docker run -e HOSTNAME=yourhostname -e PASSWORD=yourpassword -e EMAIL=youremaila
 
 ### Pyinstaller (Windows)
 
-This method is using [Pyinstaller](https://pyinstaller.org/) which is a Python extension tha can be installed. This extension converts Python scripts into Microsoft Windows executable. You can use alternatives like [py2exe](https://github.com/py2exe/py2exe) or [auto-py-to-exe](https://github.com/brentvollebregt/auto-py-to-exe) if you prefere a GUI.
+This method is using [Pyinstaller](https://pyinstaller.org/) which is a Python package that can be installed using pip. This package converts Python scripts into Microsoft Windows executable. You can also use alternatives like [py2exe](https://github.com/py2exe/py2exe) or [auto-py-to-exe](https://github.com/brentvollebregt/auto-py-to-exe) if you prefere a GUI.
 
 To get started:
 
