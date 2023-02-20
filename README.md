@@ -47,6 +47,6 @@ HOSTNAME=yourhostname
 
 4. Install Pyinstaller using `pip install pyinstaller`
 5. Install the required packages to run the script using `pip install -r requirements.txt`
-6. After the installations, run `pyinstaller <path-to-script> --one-file`.
-   - `--one-file` makes the whole thing a single .exe file which you can run manually or schedule to run using windows task scheduler.
+6. After the installations, run `pyinstaller <path-to-script> --onefile`.
+   - `--onefile` makes the whole thing a single .exe file which you can run manually or schedule to run using windows task scheduler.
    - `<path-to-script>` is the absolute or relative path of the Python script you're trying to convert to .exe.
