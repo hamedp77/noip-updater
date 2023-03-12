@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 from base64 import b64encode
-from datetime import datetime
 from time import sleep
 
 import requests
@@ -36,8 +35,8 @@ def dns_query(name, type_='A'):
         except (IndexError, KeyError):
             logging.error('An error occured while returning DNS response.')
     else:
-        logging.error('An error occurred while trying to '
-                      'retrieve hostname\'s IP address.')
+        logging.error(
+            'An error occurred while trying to retrieve hostname\'s IP address.')
 
 
 def update_hostname(new_ip):
@@ -75,7 +74,7 @@ def response_handler(noip_response):
     """Parse the response from No-IP and output relevant errors or messages."""
 
     if 'good' in noip_response:
-        logging.info(f'Update Successful! %s', noip_response.split(' ')[1])
+        logging.info('Update Successful! %s', noip_response.split(' ')[1])
     elif 'nochg' in noip_response:
         logging.info('Hostname already up to date. %s',
                      noip_response.split(' ')[1])
