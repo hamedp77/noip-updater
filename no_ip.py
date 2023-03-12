@@ -34,7 +34,7 @@ def dns_query(name, type_='A'):
         try:
             return r.json()['Answer'][0]['data']
         except (IndexError, KeyError):
-            pass
+            logging.error('An error occured while returning DNS response.')
     else:
         logging.error('An error occurred while trying to '
                       'retrieve hostname\'s IP address.')
