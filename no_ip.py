@@ -6,15 +6,6 @@ from base64 import b64encode
 from dotenv import load_dotenv
 import requests
 
-load_dotenv()
-
-UPDATE_ENDPOINT = 'https://dynupdate.no-ip.com/nic/update'
-EMAIL = os.environ.get('email')
-PASSWORD = os.environ.get('password')
-HOSTNAME = os.environ.get('hostname')
-INTERVAL = 60  # in seconds
-AUTHSTRING = b64encode((EMAIL + ':' + PASSWORD).encode())
-
 
 def timestamp():
     """Returns currnet date and time.
@@ -34,7 +25,7 @@ def get_ip():
     if r.ok:
         return r.text.strip()
     print(timestamp(),
-            ': [internal error] An error occurred while trying to retrieve machine\'s IP address.')
+          ': [internal error] An error occurred while trying to retrieve machine\'s IP address.')
 
 
 def dns_query(name, type_='A'):
@@ -50,16 +41,22 @@ def dns_query(name, type_='A'):
             pass
     else:
         print(timestamp(),
-                ': [internal error] An error occurred while trying to '
-                'retrieve hostname\'s IP address.')
+              ': [internal error] An error occurred while trying to '
+              'retrieve hostname\'s IP address.')
 
 
 def update_hostname(new_ip):
     """Update the hostname if any IP change is detected."""
 
-    headers = {'User-Agent': 'curl/7.83.1', 'Authorization': 'Basic ' + AUTHSTRING.decode()}
-    payload = {'hostname': HOSTNAME, 'myip': new_ip}
-    r = requests.get(UPDATE_ENDPOINT, headers=headers, params=payload)
+    update_endpoint = 'https://dynupdate.no-ip.com/nic/update'
+    email = os.environ.get('EMAIL')
+    password = os.environ.get('PASSWORD')
+    hostname = os.environ.get('HOSTNAME')
+    authstring = b64encode((email + ':' + password).encode())
+    headers = {'User-Agent': 'curl/7.83.1',
+               'Authorization': 'Basic ' + authstring.decode()}
+    payload = {'hostname': hostname, 'myip': new_ip}
+    r = requests.get(update_endpoint, headers=headers, params=payload)
     response_handler(r.text.strip())
 
 
@@ -69,7 +66,8 @@ def check_for_ip_change():
     Compare that with current IP address and update if necessary.
     """
 
-    current_ip = dns_query(HOSTNAME)
+    hostname = os.environ.get('HOSTNAME')
+    current_ip = dns_query(hostname)
     if get_ip() != current_ip:
         print(timestamp(), ': [info] New IP Detected, Updating Hostname...')
         current_ip = get_ip()
@@ -82,9 +80,11 @@ def response_handler(noip_response):
     """Parse the response from No-IP and output relevant errors or messages."""
 
     if 'good' in noip_response:
-        print(timestamp(), ': [good] Update Successful! ', noip_response.split(' ')[1])
+        print(timestamp(), ': [good] Update Successful! ',
+              noip_response.split(' ')[1])
     elif 'nochg' in noip_response:
-        print(timestamp(), ': [nochg] Hostname already up to date.', noip_response.split(' ')[1])
+        print(timestamp(), ': [nochg] Hostname already up to date.',
+              noip_response.split(' ')[1])
     elif 'nohost' in noip_response:
         print(timestamp(),
               f': [{noip_response}] Hostname supplied does not exist under specified account. '
@@ -115,10 +115,12 @@ def response_handler(noip_response):
 def main():
     """start the script and check IP changes based on set INTERVAL."""
 
+    load_dotenv()
+    interval = 60  # in seconds
     print(timestamp(), ': [info] Starting Service...')
     while True:
         check_for_ip_change()
-        sleep(INTERVAL)
+        sleep(interval)
 
 
 if __name__ == '__main__':
