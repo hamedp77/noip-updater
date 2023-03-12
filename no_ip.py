@@ -1,19 +1,15 @@
+import logging
 import os
 import sys
-from time import sleep
-from datetime import datetime
 from base64 import b64encode
-from dotenv import load_dotenv
+from datetime import datetime
+from time import sleep
+
 import requests
+from dotenv import load_dotenv
 
-
-def timestamp():
-    """Returns currnet date and time.
-
-    The format is "YEAR-MONTH-DAY HOUR:MINUTE:SECOND".
-    """
-
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
 
 def get_ip():
@@ -24,8 +20,8 @@ def get_ip():
     r = requests.get(ip_info_endpoint, headers=headers)
     if r.ok:
         return r.text.strip()
-    print(timestamp(),
-          ': [internal error] An error occurred while trying to retrieve machine\'s IP address.')
+    logging.error(
+        'An error occurred while trying to retrieve machine\'s IP address.')
 
 
 def dns_query(name, type_='A'):
@@ -40,9 +36,8 @@ def dns_query(name, type_='A'):
         except (IndexError, KeyError):
             pass
     else:
-        print(timestamp(),
-              ': [internal error] An error occurred while trying to '
-              'retrieve hostname\'s IP address.')
+        logging.error('An error occurred while trying to '
+                      'retrieve hostname\'s IP address.')
 
 
 def update_hostname(new_ip):
@@ -69,46 +64,39 @@ def check_for_ip_change():
     hostname = os.environ.get('NOIP_HOSTNAME')
     current_ip = dns_query(hostname)
     if get_ip() != current_ip:
-        print(timestamp(), ': [info] New IP Detected, Updating Hostname...')
+        logging.info('New IP Detected, Updating Hostname...')
         current_ip = get_ip()
         update_hostname(current_ip)
     else:
-        print(timestamp(), ': [info] No IP Change Detected.')
+        logging.info('No IP Change Detected.')
 
 
 def response_handler(noip_response):
     """Parse the response from No-IP and output relevant errors or messages."""
 
     if 'good' in noip_response:
-        print(timestamp(), ': [good] Update Successful! ',
-              noip_response.split(' ')[1])
+        logging.info(f'Update Successful! %s', noip_response.split(' ')[1])
     elif 'nochg' in noip_response:
-        print(timestamp(), ': [nochg] Hostname already up to date.',
-              noip_response.split(' ')[1])
+        logging.info('Hostname already up to date. %s',
+                     noip_response.split(' ')[1])
     elif 'nohost' in noip_response:
-        print(timestamp(),
-              f': [{noip_response}] Hostname supplied does not exist under specified account. '
-              'Please double check your information and try again.')
+        logging.error('Hostname supplied does not exist under specified account. '
+                      'Please double check your information and try again.')
         sys.exit()
     elif 'badauth' in noip_response:
-        print(timestamp(),
-              f': [{noip_response}] Invalid username or password. '
-              f'Please double check your information and try again.')
+        logging.error('Invalid username or password. '
+                      'Please double check your information and try again.')
         sys.exit()
     elif 'badagent' in noip_response:
-        print(timestamp(),
-              f': [{noip_response}] Client disabled. Contact the developer(s).')
+        logging.error('Client disabled. Contact the developer(s).')
         sys.exit()
     elif '!donator' in noip_response:
-        print(timestamp(),
-              f': [{noip_response}] Feature not available.')
+        logging.error('Feature not available.')
     elif 'abuse' in noip_response:
-        print(timestamp(),
-              f': [{noip_response}] Username is blocked due to abuse.')
+        logging.error('Username is blocked due to abuse.')
         sys.exit()
     elif '911' in noip_response:
-        print(timestamp(),
-              f': [{noip_response}] Fatal Error Occurred! Try again in 30 minutes.')
+        logging.error('Fatal Error Occurred! Try again in 30 minutes.')
         sys.exit()
 
 
@@ -117,7 +105,7 @@ def main():
 
     load_dotenv()
     interval = 60  # in seconds
-    print(timestamp(), ': [info] Starting Service...')
+    logging.info('Starting Service...')
     while True:
         check_for_ip_change()
         sleep(interval)
