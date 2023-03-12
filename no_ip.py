@@ -49,9 +49,9 @@ def update_hostname(new_ip):
     """Update the hostname if any IP change is detected."""
 
     update_endpoint = 'https://dynupdate.no-ip.com/nic/update'
-    email = os.environ.get('EMAIL')
-    password = os.environ.get('PASSWORD')
-    hostname = os.environ.get('HOSTNAME')
+    email = os.environ.get('NOIP_EMAIL')
+    password = os.environ.get('NOIP_PASSWORD')
+    hostname = os.environ.get('NOIP_HOSTNAME')
     authstring = b64encode((email + ':' + password).encode())
     headers = {'User-Agent': 'curl/7.83.1',
                'Authorization': 'Basic ' + authstring.decode()}
@@ -66,7 +66,7 @@ def check_for_ip_change():
     Compare that with current IP address and update if necessary.
     """
 
-    hostname = os.environ.get('HOSTNAME')
+    hostname = os.environ.get('NOIP_HOSTNAME')
     current_ip = dns_query(hostname)
     if get_ip() != current_ip:
         print(timestamp(), ': [info] New IP Detected, Updating Hostname...')
