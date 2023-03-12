@@ -1,3 +1,10 @@
+"""No-IP Update Client
+
+This script simply updates hostnames provided by No-IP.
+No-IP is a DDNS (Dynamic DNS) provider which offers free and paid tier DDNS services.
+You can also import it as a module and use its functions like dns_query() or get_ip().
+"""
+
 import logging
 import os
 import sys
