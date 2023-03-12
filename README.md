@@ -28,7 +28,7 @@ Currently, there are 3 methods of deployment if you want to use or test this scr
 4. Now to run the container, do:
 
 ```bash
-docker run -e HOSTNAME=yourhostname -e PASSWORD=yourpassword -e EMAIL=youremailaddress noip-updater
+docker run -e NOIP_HOSTNAME=yourhostname -e NOIP_PASSWORD=yourpassword -e NOIP_EMAIL=youremailaddress noip-updater
 ```
 
 ### Pyinstaller (Windows)
@@ -42,9 +42,9 @@ To get started:
 3. In the root of the project directory create a new file called `.env` and open it with a text editor. Put the content bellow in the .env file and save it. These are the necessary information for updating No-IP hostnames using the API.
 
 ```bash
-EMAIL=youremailaddress
-PASSWORD=yourpassword
-HOSTNAME=yourhostname
+NOIP_EMAIL=youremailaddress
+NOIP_PASSWORD=yourpassword
+NOIP_HOSTNAME=yourhostname
 ```
 
 - **WARNING**: Don't forget to fill it with **your own** account information.
