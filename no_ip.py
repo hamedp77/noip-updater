@@ -28,6 +28,7 @@ def get_ip():
         return req.text.strip()
     logging.error(
         'An error occurred while trying to retrieve machine\'s IP address.')
+    sys.exit()
 
 
 def dns_query(name, type_='A'):
@@ -41,9 +42,11 @@ def dns_query(name, type_='A'):
             return req.json()['Answer'][0]['data']
         except (IndexError, KeyError):
             logging.error('An error occured while returning DNS response.')
+            sys.exit()
     else:
         logging.error(
             'An error occurred while trying to retrieve hostname\'s IP address.')
+        sys.exit()
 
 
 def update_hostname(new_ip):
