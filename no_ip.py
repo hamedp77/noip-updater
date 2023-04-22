@@ -56,6 +56,12 @@ def update_hostname(new_ip):
     email = os.environ.get('NOIP_EMAIL')
     password = os.environ.get('NOIP_PASSWORD')
     hostname = os.environ.get('NOIP_HOSTNAME')
+
+    if not (email and password and hostname):
+        logging.error(
+            'Missing account information. Check .env file or system\'s environment variables.')
+        sys.exit()
+
     authstring = b64encode((email + ':' + password).encode())
     headers = {'User-Agent': 'curl/7.83.1',
                'Authorization': 'Basic ' + authstring.decode()}
