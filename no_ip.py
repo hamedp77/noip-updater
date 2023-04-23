@@ -77,6 +77,10 @@ def check_for_ip_change():
     """
 
     hostname = os.environ.get('NOIP_HOSTNAME')
+    if not hostname:
+        logging.error(
+            'No hostname was provided. Check .env file or system\'s environment variables.')
+        sys.exit()
     current_ip = dns_query(hostname)
     if get_ip() != current_ip:
         logging.info('New IP Detected, Updating Hostname...')
