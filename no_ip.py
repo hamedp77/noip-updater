@@ -62,9 +62,9 @@ def update_hostname(new_ip):
             'Missing account information. Check .env file or system\'s environment variables.')
         sys.exit()
 
-    authstring = b64encode((email + ':' + password).encode())
+    authstring = b64encode(f'{email}:{password}'.encode())
     headers = {'User-Agent': 'curl/7.83.1',
-               'Authorization': 'Basic ' + authstring.decode()}
+               'Authorization': f'Basic {authstring.decode()}'}
     payload = {'hostname': hostname, 'myip': new_ip}
     req = requests.get(update_endpoint, headers=headers, params=payload)
     response_handler(req.text.strip())
