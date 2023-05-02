@@ -19,9 +19,9 @@ Currently, there are 3 methods of deployment if you want to use or test this scr
 1. First you should clone the project using `git clone https://github.com/hamedp77/noip-updater.git`
 2. The Dockerfile is in the root of the project directory. You can build the docker image using `sudo docker build . -t noip-updater`. You can name your image whatever you want by putting the name after the `-t` switch.
 3. For running the image you should pass 3 parameters as environment variables.
-   - EMAIL: which is the email address you use for logging in to No-IP.
-   - PASSWORD: which is the password for your No-IP account.
-   - HOSTNAME: which is your No-IP hostname.
+   - NOIP_EMAIL: which is the email address you use for logging in to No-IP.
+   - NOIP_PASSWORD: which is the password for your No-IP account.
+   - NOIP_HOSTNAME: which is your No-IP hostname.
 
 - **Note**: This is far from secure but it's in your local machine and is never shared with anyone. The process of updating the hostname is also using HTTPS so it's encrypted.
 
