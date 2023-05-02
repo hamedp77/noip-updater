@@ -23,9 +23,9 @@ def get_ip():
 
     ip_info_endpoint = 'https://2ip.io'
     headers = {'User-Agent': 'curl/7.83.1'}
-    req = requests.get(ip_info_endpoint, headers=headers)
-    if req.ok:
-        return req.text.strip()
+    response = requests.get(ip_info_endpoint, headers=headers)
+    if response.ok:
+        return response.text.strip()
     logging.error(
         'An error occurred while trying to retrieve machine\'s IP address.')
     sys.exit()
@@ -36,10 +36,10 @@ def dns_query(name, type_='A'):
 
     doh_url = 'https://8.8.8.8/resolve'
     payload = {'name': name, 'type': type_}
-    req = requests.get(doh_url, params=payload)
-    if req.ok:
+    response = requests.get(doh_url, params=payload)
+    if response.ok:
         try:
-            return req.json()['Answer'][0]['data']
+            return response.json()['Answer'][0]['data']
         except (IndexError, KeyError):
             logging.error('An error occured while returning DNS response.')
             sys.exit()
@@ -66,8 +66,8 @@ def update_hostname(new_ip):
     headers = {'User-Agent': 'curl/7.83.1',
                'Authorization': f'Basic {authstring.decode()}'}
     payload = {'hostname': hostname, 'myip': new_ip}
-    req = requests.get(update_endpoint, headers=headers, params=payload)
-    response_handler(req.text.strip())
+    response = requests.get(update_endpoint, headers=headers, params=payload)
+    response_handler(response.text.strip())
 
 
 def check_for_ip_change():
