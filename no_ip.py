@@ -29,6 +29,7 @@ def get_ip():
     logging.error(
         'An error occurred while trying to retrieve machine\'s IP address. '
         f'({response.status_code} {response.reason})')
+    logging.info('Stopping service.')
     sys.exit()
 
 
@@ -43,11 +44,13 @@ def dns_query(name, type_='A'):
             return response.json()['Answer'][0]['data']
         except (IndexError, KeyError):
             logging.error('An error occured while returning DNS response.')
+            logging.info('Stopping service.')
             sys.exit()
     else:
         logging.error(
             'An error occurred while trying to retrieve hostname\'s IP address. '
             f'({response.status_code} {response.reason})')
+        logging.info('Stopping service.')
         sys.exit()
 
 
@@ -62,6 +65,7 @@ def update_hostname(new_ip):
     if not (email and password and hostname):
         logging.error(
             'Missing account information. Check .env file or system\'s environment variables.')
+        logging.info('Stopping service.')
         sys.exit()
 
     authstring = b64encode(f'{email}:{password}'.encode())
@@ -82,6 +86,7 @@ def check_for_ip_change():
     if not hostname:
         logging.error(
             'No hostname was provided. Check .env file or system\'s environment variables.')
+        logging.info('Stopping service.')
         sys.exit()
     current_ip = dns_query(hostname)
     if get_ip() != current_ip:
@@ -103,21 +108,28 @@ def response_handler(noip_response):
     elif 'nohost' in noip_response:
         logging.error('Hostname supplied does not exist under specified account. '
                       'Please double check your information and try again.')
+        logging.info('Stopping service.')
         sys.exit()
     elif 'badauth' in noip_response:
         logging.error('Invalid username or password. '
                       'Please double check your information and try again.')
+        logging.info('Stopping service.')
         sys.exit()
     elif 'badagent' in noip_response:
         logging.error('Client disabled. Contact the developer(s).')
+        logging.info('Stopping service.')
         sys.exit()
     elif '!donator' in noip_response:
         logging.error('Feature not available.')
+        logging.info('Stopping service.')
+        sys.exit()
     elif 'abuse' in noip_response:
         logging.error('Username is blocked due to abuse.')
+        logging.info('Stopping service.')
         sys.exit()
     elif '911' in noip_response:
         logging.error('Fatal Error Occurred! Try again in 30 minutes.')
+        logging.info('Stopping service.')
         sys.exit()
 
 
