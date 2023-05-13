@@ -22,7 +22,7 @@ def get_ip():
     """Get current public IPv4 address of the client machine."""
 
     ip_info_endpoint = 'https://2ip.io'
-    headers = {'User-Agent': 'curl/7.83.1'}
+    headers = {'User-Agent': 'curl/8.0.1'}
     response = requests.get(ip_info_endpoint, headers=headers)
     if response.ok:
         return response.text.strip()
@@ -63,7 +63,7 @@ def update_hostname(new_ip):
         sys.exit()
 
     authstring = b64encode(f'{email}:{password}'.encode())
-    headers = {'User-Agent': 'curl/7.83.1',
+    headers = {'User-Agent': 'curl/8.0.1',
                'Authorization': f'Basic {authstring.decode()}'}
     payload = {'hostname': hostname, 'myip': new_ip}
     response = requests.get(update_endpoint, headers=headers, params=payload)
