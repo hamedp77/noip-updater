@@ -37,8 +37,8 @@ def dns_query(name, type_='A'):
     """Simple DNS query resolver using Google's DNS over HTTPS endpoint."""
 
     doh_url = 'https://8.8.8.8/resolve'
-    payload = {'name': name, 'type': type_}
-    response = requests.get(doh_url, params=payload)
+    url_params = {'name': name, 'type': type_}
+    response = requests.get(doh_url, params=url_params)
     if response.ok:
         try:
             return response.json()['Answer'][0]['data']
@@ -71,8 +71,8 @@ def update_hostname(new_ip):
     authstring = b64encode(f'{email}:{password}'.encode())
     headers = {'User-Agent': 'curl/8.0.1',
                'Authorization': f'Basic {authstring.decode()}'}
-    payload = {'hostname': hostname, 'myip': new_ip}
-    response = requests.get(update_endpoint, headers=headers, params=payload)
+    url_params = {'hostname': hostname, 'myip': new_ip}
+    response = requests.get(update_endpoint, headers=headers, params=url_params)
     response_handler(response.text.strip())
 
 
