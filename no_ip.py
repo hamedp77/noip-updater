@@ -27,7 +27,8 @@ def get_ip():
     if response.ok:
         return response.text.strip()
     logging.error(
-        'An error occurred while trying to retrieve machine\'s IP address.')
+        'An error occurred while trying to retrieve machine\'s IP address. '
+        f'({response.status_code} {response.reason})')
     sys.exit()
 
 
@@ -45,7 +46,8 @@ def dns_query(name, type_='A'):
             sys.exit()
     else:
         logging.error(
-            'An error occurred while trying to retrieve hostname\'s IP address.')
+            'An error occurred while trying to retrieve hostname\'s IP address. '
+            f'({response.status_code} {response.reason})')
         sys.exit()
 
 
