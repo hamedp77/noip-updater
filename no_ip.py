@@ -23,14 +23,23 @@ def get_ip():
 
     ip_info_endpoint = 'https://2ip.io'
     headers = {'User-Agent': 'curl/8.0.1'}
-    response = requests.get(ip_info_endpoint, headers=headers)
+
+    try:
+        response = requests.get(ip_info_endpoint, headers=headers, timeout=2)
+    except requests.exceptions.Timeout:
+        logging.error('%s took too long to respond.',
+                      ip_info_endpoint.removeprefix('https://'))
+        logging.info('Retrying...')
+        retry()
+
     if response.ok:
         return response.text.strip()
+
     logging.error(
-        'An error occurred while trying to retrieve machine\'s IP address. '
-        f'({response.status_code} {response.reason})')
-    logging.info('Stopping service.')
-    sys.exit()
+        'An error occurred while trying to retrieve machine\'s IP address. (%s %s)',
+        response.status_code, response.reason)
+    logging.info('Retrying...')
+    retry()
 
 
 def dns_query(name, type_='A'):
@@ -38,20 +47,27 @@ def dns_query(name, type_='A'):
 
     doh_url = 'https://8.8.8.8/resolve'
     url_params = {'name': name, 'type': type_}
-    response = requests.get(doh_url, params=url_params)
+
+    try:
+        response = requests.get(doh_url, params=url_params, timeout=2)
+    except requests.exceptions.Timeout:
+        logging.error('DoH server took too long to respond.')
+        logging.info('Retrying...')
+        retry()
+
     if response.ok:
         try:
             return response.json()['Answer'][0]['data']
         except (IndexError, KeyError):
             logging.error('An error occured while returning DNS response.')
-            logging.info('Stopping service.')
-            sys.exit()
-    else:
-        logging.error(
-            'An error occurred while trying to retrieve hostname\'s IP address. '
-            f'({response.status_code} {response.reason})')
-        logging.info('Stopping service.')
-        sys.exit()
+            logging.info('Retrying...')
+            retry()
+
+    logging.error(
+        'An error occurred while trying to retrieve machine\'s IP address. (%s %s)',
+        response.status_code, response.reason)
+    logging.info('Retrying...')
+    retry()
 
 
 def update_hostname(new_ip):
@@ -72,7 +88,15 @@ def update_hostname(new_ip):
     headers = {'User-Agent': 'curl/8.0.1',
                'Authorization': f'Basic {authstring.decode()}'}
     url_params = {'hostname': hostname, 'myip': new_ip}
-    response = requests.get(update_endpoint, headers=headers, params=url_params)
+
+    try:
+        response = requests.get(update_endpoint, headers=headers,
+                                params=url_params, timeout=5)
+    except requests.exceptions.Timeout:
+        logging.error('No-IP API took too long to respond.')
+        logging.info('Retrying...')
+        retry()
+
     response_handler(response.text.strip())
 
 
@@ -133,10 +157,21 @@ def response_handler(noip_response):
         sys.exit()
 
 
+def retry():
+    """"Basically the main function but executes the checking loop only.
+    This will allow to retry in case of any errors.
+    """
+
+    while True:
+        check_for_ip_change()
+        sleep(interval)
+
+
 def main():
     """start the script and check IP changes based on set INTERVAL."""
 
     load_dotenv()
+    global interval  # How often to check for IP change
     interval = 60  # in seconds
     logging.info('Starting Service...')
     while True:
