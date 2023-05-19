@@ -12,12 +12,12 @@ Currently, there are 3 methods of deployment if you want to use or test this scr
 
 1. Docker (Linux)
 2. Pyinstaller (Windows)
-3. Running the script manually (Virtually everywhere)
+3. Running the script manually (Anywhere you can install Python)
 
 ### Dokcer CLI
 
 1. First you should clone the project using `git clone https://github.com/hamedp77/noip-updater.git`
-2. The Dockerfile is in the root of the project directory. You can build the docker image using `sudo docker build . -t noip-updater`. You can name your image whatever you want by putting the name after the `-t` switch.
+2. The Dockerfile is in the root of the project directory. You can build the docker image using `docker build . -t noip-updater`. You can name your image whatever you want by putting the name after the `-t` option.
 3. For running the image you should pass 3 parameters as environment variables.
    - NOIP_EMAIL: which is the email address you use for logging in to No-IP.
    - NOIP_PASSWORD: which is the password for your No-IP account.
