@@ -14,7 +14,8 @@ from time import sleep
 import requests
 from dotenv import load_dotenv
 
-INTERVAL = 60 # in seconds
+DEFAULT_TIMEOUT = 2  # in seconds
+INTERVAL = 60  # in seconds
 RETRIES = 3
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
@@ -27,7 +28,8 @@ def get_ip():
     headers = {'User-Agent': 'curl/8.0.1'}
 
     try:
-        response = requests.get(ip_info_endpoint, headers=headers, timeout=2)
+        response = requests.get(
+            ip_info_endpoint, headers=headers, timeout=DEFAULT_TIMEOUT)
     except requests.exceptions.Timeout:
         logging.error('%s took too long to respond.',
                       ip_info_endpoint.removeprefix('https://'))
@@ -49,7 +51,8 @@ def dns_query(name, type_='A'):
     url_params = {'name': name, 'type': type_}
 
     try:
-        response = requests.get(doh_url, params=url_params, timeout=2)
+        response = requests.get(
+            doh_url, params=url_params, timeout=DEFAULT_TIMEOUT)
     except requests.exceptions.Timeout:
         logging.error('DoH server took too long to respond.')
         retry()
@@ -88,7 +91,7 @@ def update_hostname(new_ip):
 
     try:
         response = requests.get(update_endpoint, headers=headers,
-                                params=url_params, timeout=5)
+                                params=url_params, timeout=DEFAULT_TIMEOUT)
     except requests.exceptions.Timeout:
         logging.error('No-IP API took too long to respond.')
         retry()
@@ -170,6 +173,7 @@ def retry():
     logging.info('Reached maximum retries.')
     logging.info('Stopping service.')
     sys.exit()
+
 
 def main():
     """start the script and check IP changes based on set INTERVAL."""
