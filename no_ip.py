@@ -91,7 +91,7 @@ def update_hostname(new_ip):
 
     try:
         response = requests.get(update_endpoint, headers=headers,
-                                params=url_params, timeout=DEFAULT_TIMEOUT)
+                                params=url_params, timeout=DEFAULT_TIMEOUT * 5)
     except requests.exceptions.Timeout:
         logging.error('No-IP API took too long to respond.')
         retry()
