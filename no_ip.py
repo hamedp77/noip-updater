@@ -61,7 +61,7 @@ def dns_query(name, type_='A'):
         try:
             return response.json()['Answer'][0]['data']
         except (IndexError, KeyError):
-            logging.error('An error occured while returning DNS response.')
+            logging.error('An error occurred while returning DNS response.')
             retry()
 
     logging.error(
