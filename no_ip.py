@@ -14,9 +14,11 @@ from time import sleep
 import requests
 from dotenv import load_dotenv
 
+from exceptions import RetryNeeded
+
 DEFAULT_TIMEOUT = 2  # in seconds
 INTERVAL = 60  # in seconds
-RETRIES = 3
+
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
@@ -33,7 +35,7 @@ def get_ip():
     except requests.exceptions.Timeout:
         logging.error('%s took too long to respond.',
                       ip_info_endpoint.removeprefix('https://'))
-        retry()
+        raise RetryNeeded
 
     if response.ok:
         return response.text.strip()
@@ -41,7 +43,7 @@ def get_ip():
     logging.error(
         'An error occurred while trying to retrieve machine\'s IP address. (%s %s)',
         response.status_code, response.reason)
-    retry()
+    raise RetryNeeded
 
 
 def dns_query(name, type_='A'):
@@ -55,19 +57,19 @@ def dns_query(name, type_='A'):
             doh_url, params=url_params, timeout=DEFAULT_TIMEOUT)
     except requests.exceptions.Timeout:
         logging.error('DoH server took too long to respond.')
-        retry()
+        raise RetryNeeded
 
     if response.ok:
         try:
             return response.json()['Answer'][0]['data']
         except (IndexError, KeyError):
             logging.error('An error occurred while returning DNS response.')
-            retry()
+            raise RetryNeeded
 
     logging.error(
         'An error occurred while trying to retrieve machine\'s IP address. (%s %s)',
         response.status_code, response.reason)
-    retry()
+    raise RetryNeeded
 
 
 def update_hostname(new_ip):
@@ -94,7 +96,7 @@ def update_hostname(new_ip):
                                 params=url_params, timeout=DEFAULT_TIMEOUT * 5)
     except requests.exceptions.Timeout:
         logging.error('No-IP API took too long to respond.')
-        retry()
+        raise RetryNeeded
 
     response_handler(response.text.strip())
 
@@ -156,33 +158,31 @@ def response_handler(noip_response):
         sys.exit()
 
 
-def retry():
-    """"Basically the main function but executes the checking loop only.
-    This will allow to retry in case of any errors.
-    """
-    global RETRIES
-
-    if RETRIES:
-        logging.info('Retrying...')
-        RETRIES -= 1
-        while True:
-            check_for_ip_change()
-            RETRIES = 3
-            sleep(INTERVAL)
-
-    logging.info('Reached maximum retries.')
-    logging.info('Stopping service.')
-    sys.exit()
-
-
 def main():
     """start the script and check IP changes based on set INTERVAL."""
 
     load_dotenv()
-    logging.info('Starting Service...')
+    logging.info('Starting service...')
+
+    backoff_delay = 5  # in seconds
+    max_retries = 3
+    attempts = 0
+
     while True:
-        check_for_ip_change()
-        sleep(INTERVAL)
+        try:
+            check_for_ip_change()
+            sleep(INTERVAL)
+            backoff_delay = 5
+        except RetryNeeded:
+            if attempts < max_retries:
+                logging.info(f'Retrying in {backoff_delay} seconds...')
+                sleep(backoff_delay)
+                backoff_delay *= 2
+                attempts += 1
+                continue
+            logging.info('Reached maximum retries.')
+            logging.info('Stopping service.')
+            sys.exit()
 
 
 if __name__ == '__main__':
