@@ -23,7 +23,7 @@ logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
 
-def get_ip():
+def get_ip() -> str | None:
     """Get current public IPv4 address of the client machine."""
 
     ip_info_endpoint = 'https://2ip.io'
@@ -46,7 +46,7 @@ def get_ip():
     raise RetryNeeded
 
 
-def dns_query(name, type_='A'):
+def dns_query(name: str, type_: str = 'A') -> str | None:
     """Simple DNS query resolver using Google's DNS over HTTPS endpoint."""
 
     doh_url = 'https://8.8.8.8/resolve'
@@ -72,7 +72,7 @@ def dns_query(name, type_='A'):
     raise RetryNeeded
 
 
-def update_hostname(new_ip):
+def update_hostname(new_ip: str) -> str | None:
     """Update the hostname if any IP change is detected."""
 
     update_endpoint = 'https://dynupdate.no-ip.com/nic/update'
@@ -101,7 +101,7 @@ def update_hostname(new_ip):
     response_handler(response.text.strip())
 
 
-def check_for_ip_change():
+def check_for_ip_change() -> None:
     """
     Query Google DoH servers and get the A record that the HOSTNAME is pointing to.
     Compare that with current IP address and update if necessary.
@@ -122,7 +122,7 @@ def check_for_ip_change():
         logging.info('No IP Change Detected.')
 
 
-def response_handler(noip_response):
+def response_handler(noip_response: str) -> None:
     """Parse the response from No-IP and output relevant errors or messages."""
 
     if 'good' in noip_response:
@@ -158,7 +158,7 @@ def response_handler(noip_response):
         sys.exit()
 
 
-def main():
+def main() -> None:
     """start the script and check IP changes based on set INTERVAL."""
 
     load_dotenv()
